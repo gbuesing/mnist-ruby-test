@@ -1,3 +1,3 @@
 require './app'
 
-run MnistApp
+run DigitClassifierApp

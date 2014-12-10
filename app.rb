@@ -3,13 +3,12 @@ require 'bundler/setup'
 require 'ruby-fann'
 require 'sinatra/base'
 require 'chunky_png'
-require 'base64'
 require 'json'
 
-$fann = nn = RubyFann::Standard.new(:filename=>"./train/trained_nn_300_60000_6.net")
+$fann = RubyFann::Standard.new(:filename=>"./train/trained_nn_300_60000_6.net")
 
 
-class MnistApp < Sinatra::Application
+class DigitClassifierApp < Sinatra::Application
   get '/' do
     erb :home
   end
@@ -29,7 +28,7 @@ class MnistApp < Sinatra::Application
       # canvas.trim!
       canvas.resample_bilinear!(28,28)
       # canvas.border! 4, 0
-      canvas.save 'test.png'
+      # canvas.save 'test.png'
 
       newpng = ChunkyPNG::Image.new(28, 28)
 
@@ -45,7 +44,7 @@ class MnistApp < Sinatra::Application
         28.times {|x| newpng[x,y] = ChunkyPNG::Color("black @ #{pixels[x + x_offset]}") }
       end
 
-      newpng.save 'test2.png'
+      # newpng.save 'test2.png'
 
 
       pixels
