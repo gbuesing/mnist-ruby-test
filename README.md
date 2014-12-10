@@ -3,9 +3,6 @@ MNIST Ruby Test
 
 Testing classification of [MNIST](http://yann.lecun.com/exdb/mnist/) digits in Ruby.
 
-MNIST data files not included in this repo.
+Includes a Sinatra app that uses a trained classifier to predict digits drawn on a <canvas> element.
 
-```
-gem install ruby-fann
-gem install rb-libsvm
-```
+MNIST data files not included in this repo.
