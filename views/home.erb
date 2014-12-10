@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digit classifier</title>
+</head>
+<body>
+  <h1>Draw a number</h1>
+
+  <canvas id="canvas" width="280" height="280" style="border: 1px solid #333"></canvas>
+
+  <div>
+    <button id="submit">Predict</button> 
+    <button id="clear">Clear</button>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script>
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext("2d");
+
+    var clickX = new Array();
+    var clickY = new Array();
+    var clickDrag = new Array();
+    var paint;
+
+    $('#submit').click(function(e) {
+      e.preventDefault();
+      var dataURL = canvas.toDataURL()
+
+      $.post('/predict', {dataURL: dataURL}, function(resp) {
+        alert('Predicted: ' + resp);
+      });
+    });
+
+    $('#clear').click(function(e) {
+      e.preventDefault();
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      clickX = new Array();
+      clickY = new Array();
+      clickDrag = new Array();
+    })
+
+    // from http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/#demo-simple
+    $('#canvas').mousedown(function(e){
+      var mouseX = e.pageX - this.offsetLeft;
+      var mouseY = e.pageY - this.offsetTop;
+        
+      paint = true;
+      addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+      redraw();
+    });
+
+    $('#canvas').mousemove(function(e){
+      if(paint){
+        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+        redraw();
+      }
+    });
+
+    $('#canvas').mouseup(function(e){
+      paint = false;
+    });
+
+    $('#canvas').mouseleave(function(e){
+      paint = false;
+    });
+
+
+    function addClick(x, y, dragging)
+    {
+      clickX.push(x);
+      clickY.push(y);
+      clickDrag.push(dragging);
+    }
+
+    function redraw(){
+      context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+      
+      context.strokeStyle = "#000";
+      context.lineJoin = "round";
+      context.lineWidth = 20;
+          
+      for(var i=0; i < clickX.length; i++) {    
+        context.beginPath();
+        if(clickDrag[i] && i){
+          context.moveTo(clickX[i-1], clickY[i-1]);
+         }else{
+           context.moveTo(clickX[i]-1, clickY[i]);
+         }
+         context.lineTo(clickX[i], clickY[i]);
+         context.closePath();
+         context.stroke();
+      }
+    }
+
+  </script>
+</body>
+</html>

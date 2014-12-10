@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
+require 'bundler/setup'
 require 'libsvm' # gem install rb-libsvm
 require './mnist_loader'
 

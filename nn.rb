@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
+require 'bundler/setup'
 require 'ruby-fann' # gem install ruby-fann
 require './mnist_loader'
 
