@@ -121,7 +121,7 @@
         var tr = $('<tr>')
         $('<td>').html(img).appendTo(tr);
         $('<td>').html(resp.predict).appendTo(tr);
-        tr.appendTo('#results > tbody').hide().fadeIn();
+        tr.prependTo('#results > tbody').hide().fadeIn();
       }, 'json');
     });
 

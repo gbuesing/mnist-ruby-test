@@ -5,7 +5,7 @@ require 'sinatra/base'
 require 'chunky_png'
 require 'json'
 
-$fann = RubyFann::Standard.new(:filename=>"./train/trained_nn_300_60000_6.net")
+$fann = RubyFann::Standard.new(:filename=>"./train/trained_nn_300_60000_7_crop.net")
 
 
 class DigitClassifierApp < Sinatra::Application
@@ -15,8 +15,8 @@ class DigitClassifierApp < Sinatra::Application
 
   post '/predict' do
     canvas = ChunkyPNG::Canvas.from_data_url(params[:dataURL])
-    canvas.resample_bilinear!(32,32)
-    random_cropped = 4.times.map { canvas.crop(rand(5), rand(5), 28, 28) }
+    canvas.resample_bilinear!(28,28)
+    random_cropped = 4.times.map { canvas.crop(rand(5), rand(5), 24, 24) }
     predict_sums = Array.new(10, 0)
     random_cropped.each do |cropped|
       pixels = get_normalized_pixels cropped
@@ -31,8 +31,8 @@ class DigitClassifierApp < Sinatra::Application
       normalize = -> (val, fromLow, fromHigh, toLow, toHigh) {  (val - fromLow) * (toHigh - toLow) / (fromHigh - fromLow).to_f }
 
       pixels = []
-      28.times do |y| 
-        28.times {|x| pixels << canvas[x, y] }
+      24.times do |y| 
+        24.times {|x| pixels << canvas[x, y] }
       end
       
       max, min = pixels.max, pixels.min

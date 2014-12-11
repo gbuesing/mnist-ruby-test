@@ -4,17 +4,20 @@ require 'rubygems'
 require 'bundler/setup'
 require 'ruby-fann' # gem install ruby-fann
 require './mnist_loader'
+require './cropper'
 
-train_size = 20_000
+train_size = 60_000
 test_size = 10_000
-hidden_neurons = 30
+hidden_neurons = 300
 
 puts "Loading training data..."
 x_train, y_train = MnistLoader.training_set.get_data_and_labels train_size
 
+x_train.map! {|row| Cropper.new(row).random_square_crop(24).to_a.flatten }
+
 
 train = RubyFann::TrainData.new(:inputs=> x_train, :desired_outputs=> y_train)
-fann = RubyFann::Standard.new(:num_inputs=> 28*28, :hidden_neurons=> [hidden_neurons], :num_outputs=> 10)
+fann = RubyFann::Standard.new(:num_inputs=> 24*24, :hidden_neurons=> [hidden_neurons], :num_outputs=> 10)
 
 puts "Training network with #{train_size} examples..."
 t = Time.now
@@ -25,6 +28,7 @@ puts "Training time: #{(Time.now - t).round(1)}s"
 
 puts "\nLoading test data..."
 x_test, y_test = MnistLoader.test_set.get_data_and_labels test_size
+x_test.map! {|row| Cropper.new(row).random_square_crop(24).to_a.flatten }
 
 error_rate = -> (errors, total) { ((errors / total.to_f) * 100).round }
 
