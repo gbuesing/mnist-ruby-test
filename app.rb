@@ -15,10 +15,15 @@ class DigitClassifierApp < Sinatra::Application
 
   post '/predict' do
     canvas = ChunkyPNG::Canvas.from_data_url(params[:dataURL])
-    canvas.resample_bilinear!(28,28)
-    pixels = get_normalized_pixels canvas
-    predict = $fann.run pixels
-    {predict: decode_prediction(predict), data_url: canvas.to_data_url}.to_json
+    canvas.resample_bilinear!(32,32)
+    random_cropped = 4.times.map { canvas.crop(rand(5), rand(5), 28, 28) }
+    predict_sums = Array.new(10, 0)
+    random_cropped.each do |cropped|
+      pixels = get_normalized_pixels cropped
+      predict = $fann.run pixels
+      predict.each_with_index {|val, i| predict_sums[i] += val}
+    end
+    {predict: decode_prediction(predict_sums), data_url: canvas.to_data_url}.to_json
   end
 
   private
