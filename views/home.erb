@@ -15,22 +15,48 @@
     canvas {
       cursor: pointer;
     }
+    #leftcol {
+      float: left;
+      width: 280px;
+      margin-right: 40px;
+    }
+    #rightcol {
+      float: left;
+      margin-right: 20px;
+    }
     </style>
 </head>
 <body>
   <h1>Digit Classifier</h1>
   <p>Draw a number in the box below and click "Predict":</p>
 
-  <canvas id="canvas" width="280" height="280" style="border: 1px solid #CCC"></canvas>
+  <div id="leftcol">
+    <canvas id="canvas" width="280" height="280" style="border: 1px solid #CCC"></canvas>
 
-  <div>
-    <button id="submit">Predict</button> 
-    <button id="clear">Clear</button>
+    <div>
+      <button id="submit">Predict</button> 
+      <button id="clear">Clear</button>
+    </div>
+  
+
+    <p>This Sinatra app classifies via a neural network (ruby-fann) which I've pre-trained on the MNIST handwritten digits dataset. This network has one hidden layer of 300 neurons, and after training with all 60,000 training examples (which took ~14 minutes), I was able to classify ~93% of the test set. You can see the training setup in the <a href="https://github.com/gbuesing/mnist-ruby-test">source code</a>.</p>
+
+    <p>Made by <a href="https://github.com/gbuesing">Geoff Buesing</a>.</p>
+
   </div>
 
-  <p>This Sinatra app classifies via a neural network (ruby-fann) which I've pre-trained on the MNIST handwritten digits dataset. This network has one hidden layer of 300 neurons, and after training with all 60,000 training examples (which took ~14 minutes), I was able to classify ~93% of the test set. You can see the training setup in the <a href="https://github.com/gbuesing/mnist-ruby-test">source code</a>.</p>
-
-  <p>Made by <a href="https://github.com/gbuesing">Geoff Buesing</a>.</p>
+  <div id="rightcol">
+    <table id="results">
+      <thead>
+        <tr>
+          <td>Actual</td>
+          <td>Predicted</td>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
 
   <a href="https://github.com/gbuesing/mnist-ruby-test"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
 
@@ -89,8 +115,14 @@
       var dataURL = canvas.toDataURL()
 
       $.post('/predict', {dataURL: dataURL}, function(resp) {
-        alert('Predicted: ' + resp);
-      });
+        // alert('Predicted: ' + resp.predict);
+
+        var img = $('<img>').attr('src', resp.data_url);
+        var tr = $('<tr>')
+        $('<td>').html(img).appendTo(tr);
+        $('<td>').html(resp.predict).appendTo(tr);
+        tr.appendTo('#results > tbody').hide().fadeIn();
+      }, 'json');
     });
 
     $('#clear').click(function(e) {

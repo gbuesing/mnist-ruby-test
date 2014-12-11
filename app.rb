@@ -14,17 +14,16 @@ class DigitClassifierApp < Sinatra::Application
   end
 
   post '/predict' do
-    pixels = get_pixels params[:dataURL]
+    canvas = ChunkyPNG::Canvas.from_data_url(params[:dataURL])
+    canvas.resample_bilinear!(28,28)
+    pixels = get_normalized_pixels canvas
     predict = $fann.run pixels
-    decode_prediction(predict).to_json
+    {predict: decode_prediction(predict), data_url: canvas.to_data_url}.to_json
   end
 
   private
-    def get_pixels dataURL
+    def get_normalized_pixels canvas
       normalize = -> (val, fromLow, fromHigh, toLow, toHigh) {  (val - fromLow) * (toHigh - toLow) / (fromHigh - fromLow).to_f }
-
-      canvas = ChunkyPNG::Canvas.from_data_url(dataURL)
-      canvas.resample_bilinear!(28,28)
 
       pixels = []
       28.times do |y| 
