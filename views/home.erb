@@ -127,6 +127,7 @@
 
     $('#submit').click(function(e) {
       e.preventDefault();
+      $('#subhead').text('Predicting...');
       var $this = $(this);
       var dataURL = canvas.toDataURL();
       $this.attr('disabled', 'disabled');
@@ -135,7 +136,7 @@
         $this.removeAttr('disabled');
         // alert('Predicted: ' + resp.predict);
 
-        $('#subhead').text('Predicted: ' + resp.predict).hide().fadeIn();
+        $('#subhead').text('Predicted: ' + resp.predict);
 
         var img = $('<img>').attr('src', resp.data_url);
         var tr = $('<tr>')
