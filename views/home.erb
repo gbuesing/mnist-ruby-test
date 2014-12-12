@@ -43,7 +43,7 @@
 </head>
 <body>
   <h1>Digit Classifier</h1>
-  <p>Draw a number in the box below and click "Predict":</p>
+  <p id="subhead">Draw a number in the box below:</p>
 
   <div id="leftcol">
     <canvas id="canvas" width="280" height="280" style="border: 1px solid #CCC"></canvas>
@@ -135,6 +135,8 @@
         $this.removeAttr('disabled');
         // alert('Predicted: ' + resp.predict);
 
+        $('#subhead').text('Predicted: ' + resp.predict).hide().fadeIn();
+
         var img = $('<img>').attr('src', resp.data_url);
         var tr = $('<tr>')
         $('<td>').html(img).appendTo(tr);
@@ -146,6 +148,7 @@
     $('#clear').click(function(e) {
       e.preventDefault();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      $('#subhead').text('Draw a number in the box below:');
     })
 
   </script>
