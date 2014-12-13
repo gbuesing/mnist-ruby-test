@@ -15,7 +15,9 @@ class DigitClassifierApp < Sinatra::Application
 
   post '/predict' do
     canvas = ChunkyPNG::Canvas.from_data_url(params[:dataURL])
-    canvas.resample_bilinear!(28,28)
+    # canvas.save 'input.png'
+    canvas = center_and_downsample canvas
+    # canvas.save 'cropped.png'
     random_cropped = 4.times.map { canvas.crop(rand(5), rand(5), 24, 24) }
     predict_sums = Array.new(10, 0)
     random_cropped.each do |cropped|
@@ -27,6 +29,18 @@ class DigitClassifierApp < Sinatra::Application
   end
 
   private
+    def center_and_downsample canvas
+      canvas.trim!
+      size = [canvas.width, canvas.height].max
+      square = ChunkyPNG::Canvas.new(size, size, ChunkyPNG::Color::TRANSPARENT)
+      offset_x = ((size - canvas.width) / 2.0).floor
+      offset_y = ((size - canvas.height) / 2.0).floor
+      square.compose! canvas, offset_x, offset_y
+      square.resample_bilinear!(20,20)
+      square.border! 4, ChunkyPNG::Color::TRANSPARENT
+      square
+    end
+
     def get_normalized_pixels canvas
       normalize = -> (val, fromLow, fromHigh, toLow, toHigh) {  (val - fromLow) * (toHigh - toLow) / (fromHigh - fromLow).to_f }
 
