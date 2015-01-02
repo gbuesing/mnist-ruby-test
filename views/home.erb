@@ -46,7 +46,7 @@
 </head>
 <body>
   <h1>Digit Classifier</h1>
-  <p id="subhead">Draw a number in the box below:</p>
+  <p id="subhead">Draw a digit [0-9] in the box below:</p>
 
   <div id="leftcol">
     <canvas id="canvas" width="280" height="280" style="border: 1px solid #CCC"></canvas>
@@ -152,7 +152,7 @@
     $('#clear').click(function(e) {
       e.preventDefault();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      $('#subhead').text('Draw a number in the box below:');
+      $('#subhead').text('Draw a digit [0-9] in the box below:');
     })
 
   </script>
